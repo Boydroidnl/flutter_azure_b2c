@@ -64,7 +64,7 @@ class B2CProviderWeb {
   static const String _B2C_PLUGIN_LAST_ACCESS = "b2c_plugin_last_access";
 
   static final DateFormat _format =
-      DateFormat("E MMM dd yyyy HH:mm:ss Z", "en_US");
+  DateFormat("E MMM dd yyyy HH:mm:ss Z", "en_US");
 
   /// Creates an istance of the B2CProviderWeb.
   ///
@@ -351,21 +351,24 @@ class B2CProviderWeb {
           B2COperationSource.POLICY_TRIGGER_SILENTLY,
           B2COperationState.SUCCESS));
     } on AuthException catch (exception) {
+      print("B2CPluginWeb policyTriggerSilently exception => $exception");
       log("Authentication failed: $exception", name: tag);
       if (exception is ClientAuthException) {
         _emitCallback(B2COperationResult(
             tag,
             B2COperationSource.POLICY_TRIGGER_SILENTLY,
             B2COperationState.CLIENT_ERROR));
-      } else if (exception is InteractionRequiredAuthException || 
+      } else if (exception is InteractionRequiredAuthException ||
           exception.message.contains(_B2C_INTERACTION_REQUIRED)) {
         /* Tokens expired or no session, retry with interactive */
+        print("B2CPluginWeb policyTriggerSilently exception => InteractionRequiredAuthException: $exception");
         _emitCallback(B2COperationResult(
             tag,
             B2COperationSource.POLICY_TRIGGER_SILENTLY,
             B2COperationState.USER_INTERACTION_REQUIRED));
       } else if (exception is ServerException) {
         /* Exception when communicating with the STS, likely config issue */
+        print("B2CPluginWeb policyTriggerSilently exception => ServerException: $exception");
         _emitCallback(B2COperationResult(
             tag,
             B2COperationSource.POLICY_TRIGGER_SILENTLY,
@@ -450,9 +453,13 @@ class B2CProviderWeb {
   /// exists.
   ///
   B2CAccessToken? getAccessToken(String subject) {
+    print("B2CPluginWeb getAccessToken, subject => $subject");
     if (_accessTokens.containsKey(subject)) {
-      return _accessTokens[subject]!;
+      final accessToken = _accessTokens[subject]!;
+      print("B2CPluginWeb getAccessToken => ${accessToken.toJson()}");
+      return accessToken;
     }
+    print("B2CPluginWeb getAccessToken => null");
     return null;
   }
 
@@ -476,7 +483,7 @@ class B2CProviderWeb {
     return B2CConfiguration(_configuration!.auth!.clientId!,
         _configuration!.auth!.redirectUri!, authorities,
         cacheLocation:
-            _configuration!.cache!.cacheLocation.toString().split(".")[1],
+        _configuration!.cache!.cacheLocation.toString().split(".")[1],
         interactionMode: _interactionMode.toString().split(".")[1],
         defaultScopes: _defaultScopes);
   }
@@ -509,12 +516,14 @@ class B2CProviderWeb {
   }
 
   B2CAccessToken _accessTokenFromAuthResult(AuthenticationResult result) {
-    print("B2CPluginWeb _accessTokenFromAuthResult => $result");
+    print("B2CPluginWeb _accessTokenFromAuthResult => ${result.toCustomString()}");
     final response = B2CAccessToken(result.uniqueId, result.accessToken,
         _format.parse(result.expiresOn.toString()).toUtc());
 
     print("B2CPluginWeb _accessTokenFromAuthResult => ${response.toJson()}");
+    return response;
   }
+
 
   void _loadAllAccounts() {
     var accounts = _b2cApp!.getAllAccounts();
@@ -544,5 +553,28 @@ class B2CProviderWeb {
 
   String _getAuthorityFromPolicyName(String policyName) {
     return "https://${_hostName!}/${_tenantName!}/$policyName/";
+  }
+}
+
+extension AuthenticationResultToString on AuthenticationResult {
+  String toCustomString() {
+    return 'AuthenticationResult('
+        'authority: $authority, '
+        'uniqueId: $uniqueId, '
+        'tenantId: $tenantId, '
+        'scopes: ${scopes.join(', ')}, '
+        'account: ${account?.toString() ?? 'null'}, '
+        'idToken: $idToken, '
+        'idTokenClaims: $idTokenClaims, '
+        'accessToken: $accessToken, '
+        'fromCache: $fromCache, '
+        'expiresOn: $expiresOn, '
+        'tokenType: $tokenType, '
+        'extExpiresOn: $extExpiresOn, '
+        'state: $state, '
+        'familyId: $familyId, '
+        'cloudGraphHostName: $cloudGraphHostName, '
+        'msGraphHost: $msGraphHost'
+        ')';
   }
 }

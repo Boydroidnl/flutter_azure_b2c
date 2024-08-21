@@ -150,7 +150,7 @@ class B2CPluginWeb {
         throw PlatformException(
           code: 'Unimplemented',
           details:
-              'flutter_azure_b2c for web doesn\'t implement \'${call.method}\'',
+          'flutter_azure_b2c for web doesn\'t implement \'${call.method}\'',
         );
     }
   }
