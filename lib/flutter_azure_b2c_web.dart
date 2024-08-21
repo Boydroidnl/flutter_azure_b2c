@@ -59,6 +59,7 @@ class B2CPluginWeb {
   /// Note: Check the "federated" architecture for a new way of doing this:
   /// https://flutter.dev/go/federated-plugins
   Future<dynamic> handleMethodCall(MethodCall call) async {
+    print("B2CPluginWeb: handleMethodCall: ${call.method}");
     switch (call.method) {
       case 'handleRedirectFuture':
         B2CProviderWeb.storeRedirectHash();
