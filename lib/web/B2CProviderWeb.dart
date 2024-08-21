@@ -509,8 +509,11 @@ class B2CProviderWeb {
   }
 
   B2CAccessToken _accessTokenFromAuthResult(AuthenticationResult result) {
-    return B2CAccessToken(result.uniqueId, result.accessToken,
+    print("B2CPluginWeb _accessTokenFromAuthResult => $result");
+    final response = B2CAccessToken(result.uniqueId, result.accessToken,
         _format.parse(result.expiresOn.toString()).toUtc());
+
+    print("B2CPluginWeb _accessTokenFromAuthResult => ${response.toJson()}");
   }
 
   void _loadAllAccounts() {

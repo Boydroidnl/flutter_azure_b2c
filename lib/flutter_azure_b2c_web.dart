@@ -101,6 +101,7 @@ class B2CPluginWeb {
         List<String> scopes = <String>[];
         for (var oScope in args["scopes"]) scopes.add(oScope);
 
+        print("B2CPluginWeb policyTriggerSilently: $tag, $subject, $policyName, $scopes");
         await _provider.policyTriggerSilently(tag, subject, policyName, scopes);
 
         return;
