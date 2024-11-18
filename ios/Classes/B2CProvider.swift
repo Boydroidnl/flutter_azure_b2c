@@ -31,7 +31,7 @@ class B2CProvider {
     /**
      * Init B2C application. It looks for existing accounts and retrieves information.
      */
-    func initMSAL(tag: String, fileName: String) {
+    func initMSAL(tag: String, fileName: String, authorityToAccept: String) {
         if let path = Bundle.main.path(forResource: fileName, ofType: "json") {
             do {
                 let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
@@ -49,6 +49,7 @@ class B2CProvider {
                             authorities.append(B2CAuthority(fromDictionary: dictionary))
                         }
                     }
+                    authorities.append(B2CAuthority(authorityUrl: authorityToAccept, authorityType: "B2C", isDefault: false))
                     
                     if let scopes = jsonResult["default_scopes"] as? [String] {
                         defaultScopes = []
