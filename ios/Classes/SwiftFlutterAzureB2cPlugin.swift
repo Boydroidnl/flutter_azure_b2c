@@ -26,7 +26,7 @@ public class SwiftFlutterAzureB2cPlugin: NSObject, FlutterPlugin, IB2COperationL
             let args = call.arguments as! [String: AnyObject]
             let configFile = args["configFile"] as! String
             let tag = args["tag"] as! String
-            let extraAuthority = args["authority"] as! String
+            let extraAuthority = args["authority"] as String?
             provider.initMSAL(tag: tag, fileName: configFile, authorityToAccept: extraAuthority)
             result(nil)
         }
