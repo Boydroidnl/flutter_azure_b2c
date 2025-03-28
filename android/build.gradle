@@ -41,6 +41,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
+    namespace com.nodriver.flutter_azure_b2c
     compileSdkVersion 31
 
     sourceSets {
