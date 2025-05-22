@@ -42,6 +42,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 31
+    namespace 'com.nodriver.flutter_azure_b2c'
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
